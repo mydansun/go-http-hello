@@ -1,0 +1,38 @@
+name: Build Go Binary
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.18'
+
+      - name: Build for Linux
+        run: |
+          env GOOS=linux GOARCH=amd64 go build -o go-http-hello-linux-amd64 go-http-hello.go
+
+      - name: Build for Windows
+        run: |
+          env GOOS=windows GOARCH=amd64 go build -o go-http-hello-windows-amd64.exe go-http-hello.go
+
+      - name: Upload Linux Binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux-binary
+          path: go-http-hello-linux-amd64
+
+      - name: Upload Windows Binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-binary
+          path: go-http-hello-windows-amd64.exe
