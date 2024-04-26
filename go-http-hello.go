@@ -5,11 +5,19 @@ import (
     "os"
     "strconv"
     "net/http"
+    "strings"
 )
 
 func hello(w http.ResponseWriter, req *http.Request) {
-
-    fmt.Fprintf(w, "hello\n")
+    ip := req.Header.Get("X-Forwarded-For")
+    if ip == "" {
+        ip = req.Header.Get("X-Real-IP")
+    }
+    if ip == "" {
+        ip = req.RemoteAddr
+        ip = strings.Split(ip, ":")[0]
+    }
+    fmt.Fprintf(w, "Hello, your IP is %s\n", ip)
 }
 
 func headers(w http.ResponseWriter, req *http.Request) {
